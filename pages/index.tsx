@@ -1,16 +1,34 @@
-import React from "react";
-import Head from "next/head";
-import { Box, Heading } from "@chakra-ui/react";
+import React from 'react';
+import {PageWrapper} from 'components/PageWrapper';
+import {Button, Modal, ModalCloseButton, ModalContent, ModalOverlay} from '@chakra-ui/react';
+import produce from 'immer'
+import {EditRecipeBox} from 'components/Recipes';
+import { Recipe } from 'entities/recipe';
 
 export default function Home() {
-  return (
-    <Box>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  const [recipes, setRecipes] = React.useState<Recipe[]>([]);
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+  const [activeRecipe, setActiveRecipe] = React.useState<Recipe>(undefined);
 
-      <Heading>Hola</Heading>
-    </Box>
+  const handleRecipeSave = (recipe: Recipe) => {
+    setRecipes(produce(recipes, draft => {
+      draft.push(recipe);
+    }))
+    setIsModalOpen(false);
+    setActiveRecipe(undefined);
+  }
+
+  return (
+    <PageWrapper title="Recetas">
+      {/* Add recipe modal */}
+      <Button colorScheme="pink" onClick={() => setIsModalOpen(true)}>Agregar Receta</Button>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="3xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalCloseButton />
+          <EditRecipeBox recipe={activeRecipe} onRecipeSave={handleRecipeSave} />
+        </ModalContent>
+      </Modal>
+    </PageWrapper>
   );
 }
