@@ -8,8 +8,7 @@ import {useApp} from 'context/App';
 import useSWR from 'swr';
 
 interface IEditRecipeBoxProps {
-  recipe?: Recipe;
-  onRecipeSave: (recipe: Recipe) => void;
+  onRecipeCreate: (recipe: Recipe) => void;
 }
 
 interface RecipeForm {
@@ -34,9 +33,9 @@ const emptyRecipe: RecipeForm = {
   ingredients: [createEmptyIngredient()],
 };
 
-export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave}) => {
+export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate}) => {
   const app = useApp();
-  const {data: ingredientList = [], error, revalidate} = useSWR('ingredients', app.getIngredients);
+  const {data: ingredientList = [], error, revalidate} = useSWR('ingredients', app.loadIngredients);
   const [recipeState, setRecipeState] = React.useState<RecipeForm>(emptyRecipe);
 
   const updateRecipeName = (name: string) => {
@@ -64,15 +63,24 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave}) => 
 
   const handleIngredientCreate = async (ingredientIndex: number, name: string) => {
     const ingredient = await app.createIngredient({name});
-    console.log('created ingredient', ingredient);
-    console.log('ingredientList', ingredientList);
     await revalidate();
-    console.warn('re-rendered. ingredientList:', ingredientList, ingredientIndex);
     handleIngredientChange(ingredientIndex, ingredient.id);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const createdRecipe = await app.createRecipe({
+      name: recipeState.name,
+      ingredients: recipeState.ingredients
+        .filter((ingredient) => ingredient.ingredientId !== '' || ingredient.quantity !== '')
+        .map((ingredient) => {
+          return {
+            id: ingredient.ingredientId,
+            quantity: Number(ingredient.quantity),
+          };
+        }),
+    });
+    onRecipeCreate(createdRecipe);
   };
 
   if (ingredientList === null) {

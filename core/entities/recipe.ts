@@ -1,15 +1,14 @@
 import {PossiblyWithId, WithId} from './types';
 import {Ingredient, IngredientPossiblyWithId, IngredientWithId} from './ingredient';
 
+interface RecipeIngredient {
+  id: string;
+  quantity: number;
+}
+
 export interface Recipe {
   name: string;
-  ingredients: Ingredient[];
+  ingredients: RecipeIngredient[];
 }
 
-export interface RecipeWithId extends WithId<Recipe> {
-  ingredients: IngredientWithId[];
-}
-
-export interface RecipePossiblyWithId extends PossiblyWithId<Recipe> {
-  ingredients: IngredientPossiblyWithId[];
-}
+export type RecipeWithId = WithId<Recipe>;
