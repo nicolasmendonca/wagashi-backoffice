@@ -6,7 +6,12 @@ import {
   buildLoadIngredientsService,
 } from 'core/services/ingredientService';
 import {ingredientsLocalStorageRepository} from '../repositories/ingredientRepository';
-import {buildCreateRecipeService, buildLoadRecipesService} from 'core/services/recipeService';
+import {
+  buildCreateRecipeService,
+  buildDeleteRecipeService,
+  buildLoadRecipesService,
+  buildUpdateRecipeService,
+} from 'core/services/recipeService';
 import {recipesLocalStorageRepository} from '../repositories/recipeRepository';
 import {Recipe, RecipeWithId} from 'core/entities/recipe';
 import {createRecipe, loadRecipes} from 'core/useCases/recipe';
@@ -16,6 +21,8 @@ interface App {
   createIngredient: (ingredient: Ingredient) => Promise<IngredientWithId>;
   createRecipe: (recipe: Recipe) => Promise<RecipeWithId>;
   loadRecipes: () => Promise<RecipeWithId[]>;
+  deleteRecipe: (recipeId: string) => Promise<boolean>;
+  updateRecipe: (recipeId: string, recipe: Recipe) => Promise<RecipeWithId>;
 }
 
 const AppContext = React.createContext<App>(undefined);
@@ -32,6 +39,8 @@ const loadIngredientsService = buildLoadIngredientsService(ingredientsLocalStora
 const createIngredientService = buildCreateIngredientService(ingredientsLocalStorageRepository);
 const createRecipeService = buildCreateRecipeService(recipesLocalStorageRepository);
 const loadRecipesService = buildLoadRecipesService(recipesLocalStorageRepository);
+const deleteRecipeService = buildDeleteRecipeService(recipesLocalStorageRepository);
+const updateRecipeService = buildUpdateRecipeService(recipesLocalStorageRepository);
 
 export const AppContextProvider: React.FC = ({children}) => {
   return (
@@ -42,6 +51,8 @@ export const AppContextProvider: React.FC = ({children}) => {
           createIngredient(createIngredientService, ingredient),
         createRecipe: (recipe: Recipe) => createRecipe(createRecipeService, recipe),
         loadRecipes: () => loadRecipes(loadRecipesService),
+        deleteRecipe: (recipeId: string) => deleteRecipeService(recipeId),
+        updateRecipe: (recipeId: string, recipe: Recipe) => updateRecipeService(recipeId, recipe),
       }}
     >
       {children}
