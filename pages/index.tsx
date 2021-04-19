@@ -6,7 +6,6 @@ import {
   Flex,
   Grid,
   GridItem,
-  HStack,
   List,
   ListItem,
   Modal,
@@ -14,9 +13,8 @@ import {
   ModalContent,
   ModalOverlay,
   Stack,
-  Text,
 } from '@chakra-ui/react';
-import {CreateRecipeBox} from 'components/Recipes';
+import {EditRecipeBox} from 'components/Recipes';
 import {useApp} from '../context/App';
 import {RiPencilFill, RiDeleteBin5Fill} from 'react-icons/ri';
 import useSWR from 'swr';
@@ -76,11 +74,19 @@ export default function Home() {
                   {recipe.name}
                 </Text>
                 <Box>
-                  <Button variant="ghost" colorScheme="pink">
-                    <RiPencilFill onClick={() => handleEditRecipeClicked(recipe.id)} />
+                  <Button
+                    variant="ghost"
+                    colorScheme="pink"
+                    onClick={() => handleEditRecipeClicked(recipe.id)}
+                  >
+                    <RiPencilFill />
                   </Button>
-                  <Button variant="ghost" colorScheme="pink">
-                    <RiDeleteBin5Fill onClick={() => handleDeleteRecipeClicked(recipe.id)} />
+                  <Button
+                    variant="ghost"
+                    colorScheme="pink"
+                    onClick={() => handleDeleteRecipeClicked(recipe.id)}
+                  >
+                    <RiDeleteBin5Fill />
                   </Button>
                 </Box>
               </Flex>
@@ -114,7 +120,7 @@ export default function Home() {
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <CreateRecipeBox editRecipeId={activeRecipeId} onRecipeSave={handleRecipeSave} />
+          <EditRecipeBox editRecipeId={activeRecipeId} onRecipeSave={handleRecipeSave} />
         </ModalContent>
       </Modal>
     </PageWrapper>

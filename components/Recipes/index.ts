@@ -1,1 +1,1 @@
-export * from './CreateRecipeBox';
+export * from './EditRecipeBox';

@@ -1,44 +1,21 @@
 import React, {FormEvent} from 'react';
 import produce from 'immer';
-import {nanoid} from 'nanoid';
 import CreatableSelect from 'react-select/creatable';
 import {chakra, Button, Container, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
 import {Recipe} from 'core/entities/recipe';
 import {useApp} from 'context/App';
 import useSWR from 'swr';
+import { IEditRecipeBoxProps, RecipeForm } from './types';
+import {convertFormValuesToRecipe, createIngredientFormValues, convertRecipeToForm} from './formHandlers'
 
-interface IEditRecipeBoxProps {
-  onRecipeSave: (recipe: Recipe) => void;
-  editRecipeId?: string;
-}
-
-interface RecipeForm {
-  name: string;
-  ingredients: Array<{
-    _id: string;
-    ingredientId: string;
-    quantity: string;
-  }>;
-}
-
-const createEmptyIngredient = () => {
-  return {
-    _id: nanoid(),
-    ingredientId: '',
-    quantity: '',
-  };
-};
-
-const emptyRecipe: RecipeForm = {
-  name: '',
-  ingredients: [createEmptyIngredient()],
-};
-
-export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, editRecipeId}) => {
+export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, editRecipeId}) => {
   const app = useApp();
   const {data: ingredientList = [], revalidate} = useSWR('ingredients', app.loadIngredients);
   const {data: recipeList = []} = useSWR('recipes', app.loadRecipes);
-  const [recipeState, setRecipeState] = React.useState<RecipeForm>(() => emptyRecipe);
+  const [recipeState, setRecipeState] = React.useState<RecipeForm>(() => ({
+    name: '',
+    ingredients: [createIngredientFormValues()],
+  }));
 
   React.useEffect(() => {
     if (editRecipeId && ingredientList.length > 0 && recipeList.length > 0) {
@@ -46,19 +23,7 @@ export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, ed
       if (!loadedRecipe) {
         throw new Error('Recipe not found');
       }
-      setRecipeState({
-        name: loadedRecipe.name,
-        ingredients: [
-          ...loadedRecipe.ingredients.map((ingredient) => {
-            return {
-              _id: nanoid(),
-              ingredientId: ingredient.id,
-              quantity: ingredient.quantity.toString(),
-            };
-          }),
-          createEmptyIngredient(),
-        ],
-      });
+      setRecipeState(convertRecipeToForm(loadedRecipe));
     }
   }, [editRecipeId, recipeList, ingredientList, setRecipeState]);
 
@@ -79,9 +44,10 @@ export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, ed
     const updatedRecipe = produce(recipeState, (draft) => {
       draft.ingredients[recipeIngredientIndex].ingredientId = newIngredientId;
 
+      const isLastIngredientFormInputFilled = draft.ingredients[ draft.ingredients.length - 1 ].ingredientId !== '';
       // Add empty ingredient if that was the last one
-      if (draft.ingredients[draft.ingredients.length - 1].ingredientId !== '') {
-        draft.ingredients.push(createEmptyIngredient());
+      if (isLastIngredientFormInputFilled) {
+        draft.ingredients.push(createIngredientFormValues());
       }
     });
     setRecipeState(updatedRecipe);
@@ -91,9 +57,10 @@ export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, ed
     const updatedRecipe = produce(recipeState, (draft) => {
       draft.ingredients.splice(ingredientIndex, 1);
 
+      const remainingIngredientFormInputs = draft.ingredients.length;
       // Add empty ingredient if that was the last one
-      if (draft.ingredients.length === 0) {
-        draft.ingredients.push(createEmptyIngredient());
+      if (remainingIngredientFormInputs === 0) {
+        draft.ingredients.push(createIngredientFormValues());
       }
     });
     setRecipeState(updatedRecipe);
@@ -107,17 +74,7 @@ export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, ed
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const recipe: Recipe = {
-      name: recipeState.name,
-      ingredients: recipeState.ingredients
-        .filter((ingredient) => ingredient.ingredientId !== '' || ingredient.quantity !== '')
-        .map((ingredient) => {
-          return {
-            id: ingredient.ingredientId,
-            quantity: Number(ingredient.quantity),
-          };
-        }),
-    };
+    const recipe: Recipe = convertFormValuesToRecipe(recipeState);
 
     const savedRecipe = editRecipeId
       ? await app.updateRecipe(editRecipeId, recipe)
@@ -126,7 +83,7 @@ export const CreateRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, ed
   };
 
   if (ingredientList === null) {
-    return <p>Loading</p>;
+    return <p>Loading</p>; // TODO add loading indicator
   }
 
   return (
