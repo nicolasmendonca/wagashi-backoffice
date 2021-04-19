@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid'
-import { Recipe } from 'core/entities/recipe';
+import { Recipe } from '@wagashi-backoffice/core';
 import { RecipeForm, RecipeFormIngredient } from './types';
 
 export const createIngredientFormValues = (ingredient: Partial<RecipeFormIngredient> = {}) => {

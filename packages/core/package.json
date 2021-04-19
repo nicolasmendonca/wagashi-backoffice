@@ -1,0 +1,24 @@
+{
+  "name": "@wagashi-backoffice/core",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc --watch",
+    "build": "rimraf dist && tsc",
+    "test": "jest"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "rimraf": "^3.0.2"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "<rootDir>/dist"
+    ]
+  }
+}

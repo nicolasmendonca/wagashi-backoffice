@@ -1,4 +1,4 @@
-import { Recipe } from 'core/entities/recipe';
+import { Recipe } from '@wagashi-backoffice/core';
 
 export interface IEditRecipeBoxProps {
   onRecipeSave: (recipe: Recipe) => void;

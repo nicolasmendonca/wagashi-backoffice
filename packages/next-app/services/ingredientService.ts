@@ -1,6 +1,5 @@
-import {Ingredient, IngredientPossiblyWithId, IngredientWithId} from 'core/entities/ingredient';
-import {CreateIngredientService, LoadIngredientsService} from 'core/useCases/ingredient';
 import {nanoid} from 'nanoid';
+import {Ingredient, IngredientWithId, CreateIngredientService, LoadIngredientsService} from '@wagashi-backoffice/core';
 import {PersistenceRepository} from './types';
 
 export type IngredientsRepository = PersistenceRepository<IngredientWithId[]>;

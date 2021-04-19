@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Flex,
+  Text,
   Grid,
   GridItem,
   List,
@@ -12,7 +13,6 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-  Stack,
 } from '@chakra-ui/react';
 import {EditRecipeBox} from 'components/Recipes';
 import {useApp} from '../context/App';

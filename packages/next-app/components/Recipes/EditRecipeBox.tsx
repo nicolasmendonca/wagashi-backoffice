@@ -2,7 +2,7 @@ import React, {FormEvent} from 'react';
 import produce from 'immer';
 import CreatableSelect from 'react-select/creatable';
 import {chakra, Button, Container, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
-import {Recipe} from 'core/entities/recipe';
+import {Recipe} from '@wagashi-backoffice/core';
 import {useApp} from 'context/App';
 import useSWR from 'swr';
 import { IEditRecipeBoxProps, RecipeForm } from './types';

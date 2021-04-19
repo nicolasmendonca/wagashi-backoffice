@@ -1,4 +1,4 @@
-import {PossiblyWithId, WithId} from './types';
+import {PossiblyWithId, WithId} from '../utils/types';
 
 export interface Ingredient {
   name: string;

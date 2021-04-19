@@ -7,7 +7,7 @@
       "context/*": ["./context/*"],
       "entities/*": ["./entities/*"],
       "utils/*": ["./utils/*"],
-      "core/*": ["./core/*"]
+      "core/*": ["@wagashi-backoffice/core/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

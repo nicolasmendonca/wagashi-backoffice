@@ -1,4 +1,5 @@
-import {Ingredient, IngredientPossiblyWithId, IngredientWithId} from 'core/entities/ingredient';
+import {Ingredient, IngredientPossiblyWithId, IngredientWithId} from './entities';
+import { validateCreateIngredient } from './validators';
 
 export type SaveIngredientsService = (ingredients: Ingredient[]) => Promise<IngredientWithId[]>;
 export type LoadIngredientsService = () => Promise<IngredientWithId[]>;
@@ -6,8 +7,13 @@ export type CreateIngredientService = (ingredient: Ingredient) => Promise<Ingred
 
 export const createIngredient = async (
   createIngredientService: CreateIngredientService,
+  loadIngredientsService: LoadIngredientsService,
   ingredient: Ingredient
-): Promise<IngredientWithId> => createIngredientService(ingredient);
+): Promise<IngredientWithId> => {
+  const ingredientList = await loadIngredientsService();
+  await validateCreateIngredient(ingredientList, ingredient);
+  return createIngredientService(ingredient)
+};
 
 export const loadIngredients = async (
   loadIngredientsService: LoadIngredientsService

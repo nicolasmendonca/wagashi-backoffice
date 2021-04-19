@@ -1,20 +1,24 @@
 import React from 'react';
-import {Ingredient, IngredientWithId} from 'core/entities/ingredient';
-import {createIngredient, loadIngredients} from 'core/useCases/ingredient';
+import {
+  Ingredient,
+  Recipe,
+  RecipeWithId,
+  IngredientWithId,
+  createIngredient,
+  loadIngredients,
+  createRecipe,
+  loadRecipes,
+} from '@wagashi-backoffice/core';
 import {
   buildCreateIngredientService,
   buildLoadIngredientsService,
-} from 'core/services/ingredientService';
-import {ingredientsLocalStorageRepository} from '../repositories/ingredientRepository';
-import {
   buildCreateRecipeService,
   buildDeleteRecipeService,
   buildLoadRecipesService,
-  buildUpdateRecipeService,
-} from 'core/services/recipeService';
+  buildUpdateRecipeService
+} from '../services'
+import {ingredientsLocalStorageRepository} from '../repositories/ingredientRepository';
 import {recipesLocalStorageRepository} from '../repositories/recipeRepository';
-import {Recipe, RecipeWithId} from 'core/entities/recipe';
-import {createRecipe, loadRecipes} from 'core/useCases/recipe';
 
 interface App {
   loadIngredients: () => Promise<IngredientWithId[]>;
@@ -45,7 +49,7 @@ const updateRecipeService = buildUpdateRecipeService(recipesLocalStorageReposito
 export const AppContextProvider: React.FC = ({children}) => {
   return (
     <AppContext.Provider
-      value={{
+      value={React.useMemo(() => ({
         loadIngredients: () => loadIngredients(loadIngredientsService),
         createIngredient: (ingredient: Ingredient) =>
           createIngredient(createIngredientService, ingredient),
@@ -53,7 +57,7 @@ export const AppContextProvider: React.FC = ({children}) => {
         loadRecipes: () => loadRecipes(loadRecipesService),
         deleteRecipe: (recipeId: string) => deleteRecipeService(recipeId),
         updateRecipe: (recipeId: string, recipe: Recipe) => updateRecipeService(recipeId, recipe),
-      }}
+      }), [])}
     >
       {children}
     </AppContext.Provider>

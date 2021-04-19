@@ -1,12 +1,13 @@
-import {Recipe, RecipeWithId} from 'core/entities/recipe';
 import produce from 'immer';
 import {nanoid} from 'nanoid';
 import {
+  Recipe,
+  RecipeWithId,
   CreateRecipeService,
   DeleteRecipesService,
   LoadRecipesService,
   UpdateRecipeService,
-} from '../useCases/recipe';
+} from '@wagashi-backoffice/core';
 import {PersistenceRepository} from './types';
 
 export type RecipesRepository = PersistenceRepository<RecipeWithId[]>;

@@ -1,4 +1,4 @@
-import {Recipe, RecipeWithId} from 'core/entities/recipe';
+import {Recipe, RecipeWithId} from './entities';
 
 export type CreateRecipeService = (recipe: Recipe) => Promise<RecipeWithId>;
 export type LoadRecipesService = () => Promise<RecipeWithId[]>;
