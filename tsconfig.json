@@ -4,8 +4,10 @@
     "paths": {
       "theme/*": ["./theme/*"],
       "components/*": ["./components/*"],
+      "context/*": ["./context/*"],
       "entities/*": ["./entities/*"],
-      "utils/*": ["./utils/*"]
+      "utils/*": ["./utils/*"],
+      "core/*": ["./core/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
