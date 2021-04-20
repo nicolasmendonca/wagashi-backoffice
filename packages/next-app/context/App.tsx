@@ -52,8 +52,8 @@ export const AppContextProvider: React.FC = ({children}) => {
       value={React.useMemo(() => ({
         loadIngredients: () => loadIngredients(loadIngredientsService),
         createIngredient: (ingredient: Ingredient) =>
-          createIngredient(createIngredientService, ingredient),
-        createRecipe: (recipe: Recipe) => createRecipe(createRecipeService, recipe),
+          createIngredient(createIngredientService, loadIngredientsService, ingredient),
+        createRecipe: (recipe: Recipe) => createRecipe(createRecipeService, loadIngredientsService, recipe),
         loadRecipes: () => loadRecipes(loadRecipesService),
         deleteRecipe: (recipeId: string) => deleteRecipeService(recipeId),
         updateRecipe: (recipeId: string, recipe: Recipe) => updateRecipeService(recipeId, recipe),

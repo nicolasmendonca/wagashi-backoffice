@@ -1,4 +1,6 @@
+import { LoadIngredientsService } from '../ingredient';
 import {Recipe, RecipeWithId} from './entities';
+import { validateCreateRecipe } from './validators';
 
 export type CreateRecipeService = (recipe: Recipe) => Promise<RecipeWithId>;
 export type LoadRecipesService = () => Promise<RecipeWithId[]>;
@@ -7,9 +9,11 @@ export type UpdateRecipeService = (recipeId: string, recipe: Recipe) => Promise<
 
 export const createRecipe = async (
   createRecipeService: CreateRecipeService,
+  loadIngredientsService: LoadIngredientsService,
   recipe: Recipe
 ): Promise<RecipeWithId> => {
-  return createRecipeService(recipe);
+  const validatedRecipe = await validateCreateRecipe(loadIngredientsService, recipe)
+  return createRecipeService(validatedRecipe);
 };
 
 export const loadRecipes = async (

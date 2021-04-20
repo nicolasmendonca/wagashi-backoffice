@@ -11,8 +11,8 @@ export const createIngredient = async (
   ingredient: Ingredient
 ): Promise<IngredientWithId> => {
   const ingredientList = await loadIngredientsService();
-  await validateCreateIngredient(ingredientList, ingredient);
-  return createIngredientService(ingredient)
+  const validatedIngredient = await validateCreateIngredient(ingredientList, ingredient);
+  return createIngredientService(validatedIngredient)
 };
 
 export const loadIngredients = async (
