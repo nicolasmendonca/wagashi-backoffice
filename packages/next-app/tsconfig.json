@@ -2,7 +2,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "theme/*": ["./theme/*"],
       "components/*": ["./components/*"],
       "context/*": ["./context/*"],
       "entities/*": ["./entities/*"],

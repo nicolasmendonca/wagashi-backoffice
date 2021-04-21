@@ -1,5 +1,5 @@
-import {RecipeWithId} from 'core/entities/recipe';
-import {RecipesRepository} from 'core/services/recipeService';
+import {RecipeWithId} from '@wagashi-backoffice/core';
+import { RecipesRepository } from '../../services';
 import {createLocalStorageRepository} from './localStorage';
 
 const repository = createLocalStorageRepository('recipe');
