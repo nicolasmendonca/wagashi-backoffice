@@ -1,8 +1,10 @@
 import axios from 'axios'
-import {RecipeWithId} from '@wagashi-backoffice/core';
-import { RecipesRepository } from '../../services';
+import {Recipe, RecipeWithId} from '@wagashi-backoffice/core';
+import { RecipesRepository } from '../../services/backendApi';
 
-export const recipesLocalStorageRepository: RecipesRepository = {
+
+export const recipesBackendApiRepository: RecipesRepository = {
   load: async () =>  (await axios.get<RecipeWithId[]>('/api/recipes')).data,
-  save: async (recipes: RecipeWithId[]) => (await axios.post<RecipeWithId[]>('/api/recipes', { recipes })).data,
+  save: async (recipe: Recipe) => (await axios.post<RecipeWithId>('/api/recipes', { recipe })).data,
+  delete: async (recipeId: string) => (await axios.delete<RecipeWithId[]>(`/api/recipes/${recipeId}`)).data
 };

@@ -8,9 +8,9 @@ import {
   LoadRecipesService,
   UpdateRecipeService,
 } from '@wagashi-backoffice/core';
-import {PersistenceRepository} from './types';
+import {LocalStorageRepository} from './types';
 
-export type RecipesRepository = PersistenceRepository<RecipeWithId[]>;
+export type RecipesRepository = LocalStorageRepository<RecipeWithId[]>;
 
 export const buildCreateRecipeService = (
   recipesRepository: RecipesRepository

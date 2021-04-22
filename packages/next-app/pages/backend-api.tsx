@@ -1,7 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
 import { RecipeEditor, RecipeEditorServiceProvider} from '@wagashi-backoffice/recipe-editor'
-import { buildCreateIngredientService, buildCreateRecipeService, buildDeleteRecipeService, buildLoadIngredientsService, buildLoadRecipesService, buildUpdateRecipeService } from '../services'
+import { buildCreateIngredientService, buildCreateRecipeService, buildDeleteRecipeService, buildLoadIngredientsService, buildLoadRecipesService, buildUpdateRecipeService } from '../services/backendApi'
 import { ingredientsLocalStorageRepository, recipesLocalStorageRepository } from '../repositories/backendApi'
 
 interface IRecipeEditorPageProps {}

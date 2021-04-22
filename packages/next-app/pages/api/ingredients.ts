@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import { IngredientWithId } from '@wagashi-backoffice/core'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -7,7 +8,10 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     return res.status(200).json(ingredients);
   } else if (req.method === 'POST') {
-    ingredients.push(...req.body.ingredients)
+    ingredients.push({
+        id: nanoid(),
+        ...req.body.ingredient
+    })
     return res.status(200).json(ingredients);
   }
 

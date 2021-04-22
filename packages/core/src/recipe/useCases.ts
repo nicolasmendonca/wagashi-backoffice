@@ -2,16 +2,16 @@ import { LoadIngredientsService } from '../ingredient';
 import {Recipe, RecipeWithId} from './entities';
 import { validateCreateRecipe } from './validators';
 
-export type CreateRecipeService = (recipe: Recipe) => Promise<RecipeWithId>;
+export type CreateRecipeService = (recipe: Recipe) => Promise<RecipeWithId[]>;
 export type LoadRecipesService = () => Promise<RecipeWithId[]>;
-export type DeleteRecipesService = (recipeId: string) => Promise<boolean>;
-export type UpdateRecipeService = (recipeId: string, recipe: Recipe) => Promise<RecipeWithId>;
+export type DeleteRecipesService = (recipeId: string) => Promise<RecipeWithId[]>;
+export type UpdateRecipeService = (recipeId: string, recipe: Recipe) => Promise<RecipeWithId[]>;
 
 export const createRecipe = async (
   createRecipeService: CreateRecipeService,
   loadIngredientsService: LoadIngredientsService,
   recipe: Recipe
-): Promise<RecipeWithId> => {
+): Promise<RecipeWithId[]> => {
   const validatedRecipe = await validateCreateRecipe(loadIngredientsService, recipe)
   return createRecipeService(validatedRecipe);
 };
@@ -25,7 +25,7 @@ export const loadRecipes = async (
 export const deleteRecipe = async (
   deleteRecipeService: DeleteRecipesService,
   recipeId: string
-): Promise<boolean> => {
+): Promise<RecipeWithId[]> => {
   return deleteRecipeService(recipeId);
 };
 
@@ -33,6 +33,6 @@ export const updateRecipe = async (
   updateRecipeService: UpdateRecipeService,
   recipeId: string,
   recipe: Recipe
-): Promise<RecipeWithId> => {
+): Promise<RecipeWithId[]> => {
   return updateRecipeService(recipeId, recipe);
 };

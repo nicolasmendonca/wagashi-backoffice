@@ -1,8 +1,8 @@
 import {nanoid} from 'nanoid';
 import {Ingredient, IngredientWithId, CreateIngredientService, LoadIngredientsService} from '@wagashi-backoffice/core';
-import {PersistenceRepository} from './types';
+import {LocalStorageRepository} from './types';
 
-export type IngredientsRepository = PersistenceRepository<IngredientWithId[]>;
+export type IngredientsRepository = LocalStorageRepository<IngredientWithId[]>;
 
 export const buildLoadIngredientsService = (
   ingredientsRepository: IngredientsRepository
