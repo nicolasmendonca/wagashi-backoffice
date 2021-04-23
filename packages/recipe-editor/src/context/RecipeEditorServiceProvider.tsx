@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   CreateIngredientService,
   CreateRecipeService,
@@ -7,6 +6,7 @@ import {
   LoadRecipesService,
   UpdateRecipeService,
 } from '@wagashi-backoffice/core';
+import React from 'react';
 
 interface RecipeEditorServices {
   createRecipeService: CreateRecipeService;

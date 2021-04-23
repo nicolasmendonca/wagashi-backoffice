@@ -1,10 +1,10 @@
-import {nanoid} from 'nanoid'
+import {nanoid} from 'nanoid';
 import { Recipe } from '@wagashi-backoffice/core';
 import { RecipeForm, RecipeFormIngredient } from './types';
 
 export const createIngredientFormValues = (ingredient: Partial<RecipeFormIngredient> = {}) => {
   const defaultValues = {
-    _id: ingredient._id ?? nanoid(),
+    _id: ingredient._id ? ingredient._id : nanoid(),
     ingredientId: '',
     quantity: '',
   };

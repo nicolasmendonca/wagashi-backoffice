@@ -6,19 +6,19 @@ import {
   loadIngredients,
   updateRecipe,
   createRecipe,
+  Recipe,
 } from '@wagashi-backoffice/core';
 import CreatableSelect from 'react-select/creatable';
 import {chakra, Button, Container, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
-import {Recipe} from '@wagashi-backoffice/core';
 
 import useSWR from 'swr';
-import {IEditRecipeBoxProps, RecipeForm} from './types';
 import {
   convertFormValuesToRecipe,
   createIngredientFormValues,
   convertRecipeToForm,
 } from './formHandlers';
 import {useRecipeEditorServices} from '../../context/RecipeEditorServiceProvider';
+import type {IEditRecipeBoxProps, RecipeForm} from './types';
 
 export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, editRecipeId}) => {
   const {

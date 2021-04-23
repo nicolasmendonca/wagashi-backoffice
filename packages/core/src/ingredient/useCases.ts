@@ -1,8 +1,8 @@
 import {Ingredient, IngredientWithId} from './entities';
 import { validateCreateIngredient } from './validators';
 
-export type LoadIngredientsService = () => Promise<IngredientWithId[]>;
 export type CreateIngredientService = (ingredient: Ingredient) => Promise<IngredientWithId>;
+export type LoadIngredientsService = () => Promise<IngredientWithId[]>;
 
 export const createIngredient = async (
   createIngredientService: CreateIngredientService,

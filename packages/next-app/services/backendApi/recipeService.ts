@@ -1,10 +1,8 @@
-import produce from 'immer';
-import {nanoid} from 'nanoid';
 import {
   Recipe,
   RecipeWithId,
   CreateRecipeService,
-  DeleteRecipesService,
+  DeleteRecipeService,
   LoadRecipesService,
   UpdateRecipeService,
 } from '@wagashi-backoffice/core';
@@ -26,7 +24,7 @@ export const buildLoadRecipesService = (
 
 export const buildDeleteRecipeService = (
   recipesRepository: RecipesRepository
-): DeleteRecipesService => {
+): DeleteRecipeService => {
   return async (recipeId: string) => {
     await recipesRepository.delete(recipeId);
     return recipesRepository.load()
@@ -36,13 +34,7 @@ export const buildDeleteRecipeService = (
 export const buildUpdateRecipeService = (
   recipesRepository: RecipesRepository
 ): UpdateRecipeService => {
-  return async (recipeId: string, recipe: Recipe) => {
-    const recipes = await recipesRepository.load();
-    const updatedRecipes = produce(recipes, (draft) => {
-      const recipeIndex = draft.findIndex((recipe) => recipe.id === recipeId);
-      draft[recipeIndex] = {id: recipeId, ...recipe};
-    });
-    await recipesRepository.save(updatedRecipes);
-    return updatedRecipes.find((recipe) => recipe.id === recipeId);
+  return async (recipeId: string, recipe: RecipeWithId) => {
+    return recipesRepository.update(recipeId, recipe)
   };
 };

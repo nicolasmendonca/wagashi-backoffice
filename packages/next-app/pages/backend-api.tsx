@@ -1,8 +1,8 @@
 import React from 'react'
 import Head from 'next/head'
 import { RecipeEditor, RecipeEditorServiceProvider} from '@wagashi-backoffice/recipe-editor'
-import { buildCreateIngredientService, buildCreateRecipeService, buildLoadIngredientsService, buildLoadRecipesService } from '../services/backendApi'
-import { recipesBackendApiRepository } from '../repositories/backendApi'
+import { buildCreateIngredientService, buildCreateRecipeService, buildDeleteRecipeService, buildLoadIngredientsService, buildLoadRecipesService, buildUpdateRecipeService } from '../services/backendApi'
+import { ingredientsBackendApiRepository, recipesBackendApiRepository } from '../repositories/backendApi'
 
 interface IRecipeEditorPageProps {}
 
@@ -13,10 +13,12 @@ const RecipeEditorPage: React.FC<IRecipeEditorPageProps> = () => {
       <title>Recetas</title>
     </Head>
     <RecipeEditorServiceProvider value={{
-      createRecipeService: buildCreateRecipeService(recipesLocalStorageRepository),
-      loadRecipesService: buildLoadRecipesService(recipesLocalStorageRepository),
-      createIngredientService: buildCreateIngredientService(ingredientsLocalStorageRepository),
-      loadIngredientsService: buildLoadIngredientsService(ingredientsLocalStorageRepository),
+      createRecipeService: buildCreateRecipeService(recipesBackendApiRepository),
+      loadRecipesService: buildLoadRecipesService(recipesBackendApiRepository),
+      createIngredientService: buildCreateIngredientService(ingredientsBackendApiRepository),
+      loadIngredientsService: buildLoadIngredientsService(ingredientsBackendApiRepository),
+      updateRecipeService: buildUpdateRecipeService(recipesBackendApiRepository),
+      deleteRecipeService: buildDeleteRecipeService(recipesBackendApiRepository)
     }}>
       <RecipeEditor />
     </RecipeEditorServiceProvider>
