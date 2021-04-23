@@ -1,8 +1,9 @@
-import {PossiblyWithId, WithId} from '../utils/types';
+import {WithId} from '../utils/types';
 
 export interface Ingredient {
   name: string;
 }
 
-export type IngredientWithId = WithId<Ingredient>;
-export type IngredientPossiblyWithId = PossiblyWithId<Ingredient>;
+export interface IngredientWithId extends Ingredient {
+  id: string;
+}

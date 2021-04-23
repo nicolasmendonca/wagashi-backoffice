@@ -10,4 +10,6 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
 }
 
-export type RecipeWithId = WithId<Recipe>;
+export interface RecipeWithId  extends Recipe {
+  id: string;
+}
