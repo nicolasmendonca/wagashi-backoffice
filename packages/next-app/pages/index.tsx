@@ -8,8 +8,8 @@ import {
   buildLoadIngredientsService,
   buildLoadRecipesService,
   buildUpdateRecipeService,
-} from '../services/localStorage';
-import {recipesLocalStorageRepository, ingredientsLocalStorageRepository} from '../repositories/localStorage';
+} from '../services/backendApi';
+import {ingredientsBackendApiRepository, recipesBackendApiRepository} from '../repositories/backendApi';
 import {PageWrapper} from '../components/PageWrapper';
 
 interface IRecipeEditorPageProps {}
@@ -23,12 +23,12 @@ const RecipeEditorPage: React.FC<IRecipeEditorPageProps> = () => {
       <PageWrapper title="Recetas">
         <RecipeEditor
           services={{
-            createRecipeService: buildCreateRecipeService(recipesLocalStorageRepository),
-            loadRecipesService: buildLoadRecipesService(recipesLocalStorageRepository),
-            updateRecipeService: buildUpdateRecipeService(recipesLocalStorageRepository),
-            deleteRecipeService: buildDeleteRecipeService(recipesLocalStorageRepository),
-            createIngredientService: buildCreateIngredientService(ingredientsLocalStorageRepository),
-            loadIngredientsService: buildLoadIngredientsService(ingredientsLocalStorageRepository),
+            createRecipeService: buildCreateRecipeService(recipesBackendApiRepository),
+            loadRecipesService: buildLoadRecipesService(recipesBackendApiRepository),
+            createIngredientService: buildCreateIngredientService(ingredientsBackendApiRepository),
+            loadIngredientsService: buildLoadIngredientsService(ingredientsBackendApiRepository),
+            updateRecipeService: buildUpdateRecipeService(recipesBackendApiRepository),
+            deleteRecipeService: buildDeleteRecipeService(recipesBackendApiRepository),
           }}
         />
       </PageWrapper>
