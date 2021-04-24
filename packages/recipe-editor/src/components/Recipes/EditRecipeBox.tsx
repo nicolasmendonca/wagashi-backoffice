@@ -1,37 +1,19 @@
 import React, {FormEvent} from 'react';
 import produce from 'immer';
-import {
-  createIngredient,
-  loadRecipes,
-  loadIngredients,
-  updateRecipe,
-  createRecipe,
-  Recipe,
-} from '@wagashi-backoffice/core';
+import {createIngredient, loadRecipes, loadIngredients, updateRecipe, createRecipe, Recipe} from '@wagashi-backoffice/core';
 import CreatableSelect from 'react-select/creatable';
 import {chakra, Button, Container, FormControl, FormLabel, HStack, Input} from '@chakra-ui/react';
 
 import useSWR from 'swr';
-import {
-  convertFormValuesToRecipe,
-  createIngredientFormValues,
-  convertRecipeToForm,
-} from './formHandlers';
+import {convertFormValuesToRecipe, createIngredientFormValues, convertRecipeToForm} from './formHandlers';
 import {useRecipeEditorServices} from '../../context/RecipeEditorServiceProvider';
 import type {IEditRecipeBoxProps, RecipeForm} from './types';
+import {nanoid} from 'nanoid';
 
-export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, editRecipeId}) => {
-  const {
-    loadRecipesService,
-    createIngredientService,
-    updateRecipeService,
-    createRecipeService,
-    loadIngredientsService,
-  } = useRecipeEditorServices();
-  const {data: ingredientList = [], revalidate} = useSWR('ingredients', () =>
-    loadIngredients(loadIngredientsService)
-  );
-  const {data: recipeList = []} = useSWR('recipes', () => loadRecipes(loadRecipesService));
+export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, onRecipeUpdate, editRecipeId}) => {
+  const {loadRecipesService, createIngredientService, updateRecipeService, createRecipeService, loadIngredientsService} = useRecipeEditorServices();
+  const {data: ingredientList = [], mutate: mutateIngredients} = useSWR('ingredients', () => loadIngredients(loadIngredientsService));
+  const {data: recipeList = [], mutate: mutateRecipes} = useSWR('recipes', () => loadRecipes(loadRecipesService));
   const [recipeState, setRecipeState] = React.useState<RecipeForm>(() => ({
     name: '',
     ingredients: [createIngredientFormValues()],
@@ -64,8 +46,7 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, edit
     const updatedRecipe = produce(recipeState, (draft) => {
       draft.ingredients[recipeIngredientIndex].ingredientId = newIngredientId;
 
-      const isLastIngredientFormInputFilled =
-        draft.ingredients[draft.ingredients.length - 1].ingredientId !== '';
+      const isLastIngredientFormInputFilled = draft.ingredients[draft.ingredients.length - 1].ingredientId !== '';
       // Add empty ingredient if that was the last one
       if (isLastIngredientFormInputFilled) {
         draft.ingredients.push(createIngredientFormValues());
@@ -88,21 +69,72 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, edit
   };
 
   const handleIngredientCreate = async (ingredientIndex: number, name: string) => {
-    const ingredient = await createIngredient(createIngredientService, loadIngredientsService, {
-      name,
-    });
-    await revalidate();
-    handleIngredientChange(ingredientIndex, ingredient.id);
+    const createdIngredientWithFakeId = {id: nanoid(), name};
+    // 1. Update the form value and the ingredients to reflect the change instantly
+    mutateIngredients(
+      (ingredients) =>
+        produce(ingredients, (ingredientsDraft) => {
+          if (!ingredientsDraft) return;
+          ingredientsDraft.push(createdIngredientWithFakeId);
+          // update recipe form to contain new value
+          setRecipeState((recipe) =>
+            produce(recipe, (recipeDraft) => {
+              recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
+                ingredientId: createdIngredientWithFakeId.id,
+              });
+              const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
+              // Add empty ingredient if that was the last one
+              if (!isAnyAvailableIngredientFormInput) {
+                recipeDraft.ingredients.push(createIngredientFormValues());
+              }
+            })
+          );
+        }),
+      false
+    );
+    // 2. create the ingredient and update form state with real value and then revalidate
+    mutateIngredients(async (ingredients) =>
+      produce(ingredients, async (ingredientsDraft) => {
+        if (!ingredientsDraft) return;
+        // create the ingredient on the backend
+        const savedIngredient = await createIngredient(createIngredientService, loadIngredientsService, {
+          name,
+        });
+        const newSavedIngredientIndex = ingredientsDraft.findIndex(ing => ing.id === createdIngredientWithFakeId.id);
+        if (!newSavedIngredientIndex) return
+        ingredientsDraft[newSavedIngredientIndex].id = savedIngredient.id;
+        // update form value with the new saved ingredient id
+        setRecipeState((recipe) =>
+          produce(recipe, (recipeDraft) => {
+            recipeDraft.ingredients[ingredientIndex].ingredientId = savedIngredient.id;
+          })
+        );
+      })
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const recipe: Recipe = convertFormValuesToRecipe(recipeState);
-
-    const savedRecipe = editRecipeId
-      ? await updateRecipe(updateRecipeService, editRecipeId, recipe)
-      : await createRecipe(createRecipeService, loadIngredientsService, recipe);
-    onRecipeSave(savedRecipe);
+    if (editRecipeId) {
+      onRecipeUpdate({id: editRecipeId, ...recipe});
+      mutateRecipes(async (cachedRecipes) =>
+        produce(cachedRecipes, async (draft) => {
+          const recipeIndex = draft?.findIndex((recipe) => recipe.id === editRecipeId);
+          if (recipeIndex === -1 || recipeIndex === undefined || draft === undefined) return;
+          draft[recipeIndex] = await updateRecipe(updateRecipeService, editRecipeId, recipe);
+        })
+      );
+    } else {
+      onRecipeCreate(recipe);
+      mutateRecipes(async (cachedRecipes) =>
+        produce(cachedRecipes, async (draft) => {
+          if (draft === undefined) return;
+          const savedRecipe = await createRecipe(createRecipeService, loadIngredientsService, recipe);
+          draft.push(savedRecipe);
+        })
+      );
+    }
   };
 
   if (ingredientList === null) {
@@ -123,9 +155,7 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, edit
         </FormControl>
 
         {recipeState.ingredients.map((recipeIngredient, index) => {
-          const selectedIngredient = ingredientList.find(
-            (ingredient) => ingredient.id === recipeIngredient.ingredientId
-          );
+          const selectedIngredient = ingredientList.find((ingredient) => ingredient.id === recipeIngredient.ingredientId);
           return (
             <HStack key={recipeIngredient._id} my={4}>
               <StyledCreatableSelect
@@ -163,20 +193,14 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, edit
                   </React.Fragment>
                 )}
                 onCreateOption={(name: string) => handleIngredientCreate(index, name)}
-                onChange={(option: {value: string}) =>
-                  option
-                    ? handleIngredientChange(index, option.value)
-                    : handleIngredientRemove(index)
-                }
+                onChange={(option: {value: string}) => (option ? handleIngredientChange(index, option.value) : handleIngredientRemove(index))}
               />
               <FormControl>
                 <Input
                   type="text"
                   aria-label="Cantidad"
                   placeholder="Cantidad"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    updateRecipeIngredientQuantity(index, e.target.value)
-                  }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateRecipeIngredientQuantity(index, e.target.value)}
                   value={recipeIngredient.quantity}
                 />
               </FormControl>
@@ -192,14 +216,5 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeSave, edit
 };
 
 const StyledCreatableSelect = chakra(CreatableSelect, {
-  shouldForwardProp: (prop: string) =>
-    [
-      'isClearable',
-      'placeholder',
-      'value',
-      'options',
-      'formatCreateLabel',
-      'onCreateOption',
-      'onChange',
-    ].includes(prop),
+  shouldForwardProp: (prop: string) => ['isClearable', 'placeholder', 'value', 'options', 'formatCreateLabel', 'onCreateOption', 'onChange'].includes(prop),
 });
