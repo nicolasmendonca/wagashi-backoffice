@@ -41,6 +41,7 @@ export function RecipeEditor() {
 
   const handleRecipeSave = async () => {
     setIsModalOpen(false);
+    setActiveRecipeId(undefined);
     await revalidate();
   };
 

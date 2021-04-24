@@ -4,7 +4,7 @@ import {
   Recipe,
   RecipeWithId,
   CreateRecipeService,
-  DeleteRecipesService,
+  DeleteRecipeService,
   LoadRecipesService,
   UpdateRecipeService,
 } from '@wagashi-backoffice/core';
@@ -35,7 +35,7 @@ export const buildLoadRecipesService = (
 
 export const buildDeleteRecipeService = (
   recipesRepository: RecipesRepository
-): DeleteRecipesService => {
+): DeleteRecipeService => {
   return async (recipeId: string) => {
     const recipes = await recipesRepository.load();
     const updatedRecipes = produce(recipes, (draft) => {
@@ -43,7 +43,7 @@ export const buildDeleteRecipeService = (
       draft.splice(recipe, 1);
     });
     await recipesRepository.save(updatedRecipes);
-    return true;
+    return updatedRecipes;
   };
 };
 
