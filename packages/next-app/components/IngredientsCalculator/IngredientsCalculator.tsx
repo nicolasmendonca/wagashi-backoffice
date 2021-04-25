@@ -94,30 +94,44 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
     </Flex>
   ) : (
     <SimpleGrid columns={2} gap={8}>
-      <List borderRadius="md" borderColor="pink" borderWidth="1px">
-        {recipes.map((recipe, index) => {
-          const recipeCount = recipesCount[recipe.id];
-          return (
-            <ListItem key={recipe.id} bg={index % 2 == 0 ? 'pink.200' : 'pink.100'} p="4" borderColor="pink" borderBottomWidth="1px">
-              <Flex alignItems="center" justifyContent="space-between">
-                <span>{recipe.name}</span>
-                <Flex alignItems="center" justifyContent="center">
-                  <Button size="sm" variant="ghost" colorScheme="pink" onClick={() => handleRecipeCountAdd(recipe.id, -1)}>
+      <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200">
+        <Thead>
+          <Tr>
+            <Th>Receta</Th>
+            <Th textAlign="right" width="180px">
+              Cantidad
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {recipes.map((recipe, index) => {
+            const recipeCount = recipesCount[recipe.id];
+            return (
+              <Tr key={recipe.id} p="4">
+                <Td wordBreak="break-word">{recipe.name}</Td>
+                <Td textAlign="right">
+                  <Button size="sm" variant="ghost" colorScheme="pink" onClick={() => handleRecipeCountAdd(recipe.id, -1)} display="inline-block">
                     <RiSubtractFill />
                   </Button>
-                  <Editable value={recipeCount || '0'} width="12" textAlign="center" onChange={(value) => changeRecipeQuantity(recipe.id, value)}>
+                  <Editable
+                    value={recipeCount || '0'}
+                    textAlign="center"
+                    onChange={(value) => changeRecipeQuantity(recipe.id, value)}
+                    display="inline-block"
+                    width="12"
+                  >
                     <EditablePreview />
                     <EditableInput type="number" />
                   </Editable>
-                  <Button size="sm" variant="ghost" colorScheme="pink" onClick={() => handleRecipeCountAdd(recipe.id, 1)}>
+                  <Button size="sm" variant="ghost" colorScheme="pink" onClick={() => handleRecipeCountAdd(recipe.id, 1)} display="inline-block">
                     <RiAddFill />
                   </Button>
-                </Flex>
-              </Flex>
-            </ListItem>
-          );
-        })}
-      </List>
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
       <Box borderColor="pink.200" borderWidth="1px" borderRadius="md">
         <Box bgColor="pink.300">
           <Heading as="h2" size="md" p={4} height="65px">
