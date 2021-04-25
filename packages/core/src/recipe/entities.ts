@@ -10,6 +10,11 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
 }
 
-export interface RecipeWithId  extends Recipe {
+export interface RecipeWithId extends Recipe {
   id: string;
+}
+
+export interface RecipeIngredientSummary {
+  id: string;
+  total: number;
 }
