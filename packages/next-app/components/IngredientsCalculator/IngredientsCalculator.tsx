@@ -132,29 +132,31 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
           })}
         </Tbody>
       </Table>
-      <Box borderColor="pink.200" borderWidth="1px" borderRadius="md">
-        <Box bgColor="pink.300">
-          <Heading as="h2" size="md" p={4} height="65px">
-            Ingredientes Necesarios
-          </Heading>
-        </Box>
-        <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200">
-          <Thead>
-            <Tr>
-              <Th>Ingrediente</Th>
-              <Th>Cantidad</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {ingredientSummary.map((ingredient) => (
-              <Tr key={ingredient.id}>
-                <Td>{ingredient.name}</Td>
-                <Td>{ingredient.total}</Td>
+      {ingredientSummary.length > 0 && (
+        <Box borderColor="pink.200" borderWidth="1px" borderRadius="md">
+          <Box bgColor="pink.300">
+            <Heading as="h2" size="md" p={4} height="65px">
+              Ingredientes Necesarios
+            </Heading>
+          </Box>
+          <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200">
+            <Thead>
+              <Tr>
+                <Th>Ingrediente</Th>
+                <Th>Cantidad</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+            </Thead>
+            <Tbody>
+              {ingredientSummary.map((ingredient) => (
+                <Tr key={ingredient.id}>
+                  <Td>{ingredient.name}</Td>
+                  <Td>{ingredient.total}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      )}
     </SimpleGrid>
   );
 };
