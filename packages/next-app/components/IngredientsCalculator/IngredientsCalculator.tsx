@@ -70,9 +70,11 @@ const useIngredientsCalculator = ({loadRecipesService, loadIngredientsService}: 
     ingredients,
     recipesCount,
     changeRecipeQuantity: (recipeId: string, newQuantity: string) => {
+      const highTappedNewQuantity = Math.min(Number(newQuantity), 100000);
+      const lowTappedNewQuantity = Math.max(highTappedNewQuantity, 0);
       setRecipesCount(
         produce(recipesCount, (recipesCountDraft) => {
-          recipesCountDraft[recipeId] = newQuantity;
+          recipesCountDraft[recipeId] = lowTappedNewQuantity.toString();
         })
       );
     },
@@ -85,7 +87,7 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
   console.log(ingredientSummary);
 
   const handleRecipeCountAdd = (recipeId: string, incrementBy: number) => {
-    changeRecipeQuantity(recipeId, (Number(recipesCount[recipeId] || '0') + incrementBy).toString());
+    changeRecipeQuantity(recipeId, Math.max(Number(recipesCount[recipeId] || '0') + incrementBy, 0).toString());
   };
 
   return [recipes, ingredients].includes(undefined) ? (
