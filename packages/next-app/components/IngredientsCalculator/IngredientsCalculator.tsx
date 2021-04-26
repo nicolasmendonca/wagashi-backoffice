@@ -96,7 +96,7 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
     </Flex>
   ) : (
     <SimpleGrid columns={2} gap={8}>
-      <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200">
+      <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200" borderColor="pink.200" borderWidth="1px" borderRadius="md">
         <Thead>
           <Tr>
             <Th>Receta</Th>
@@ -135,13 +135,13 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
         </Tbody>
       </Table>
       {ingredientSummary.length > 0 && (
-        <Box borderColor="pink.200" borderWidth="1px" borderRadius="md">
-          <Box bgColor="pink.300">
+        <Box borderColor="pink.200" borderWidth="1px" borderTopRadius="md">
+          <Box bgColor="pink.200">
             <Heading as="h2" size="md" p={4} height="65px">
               Ingredientes Necesarios
             </Heading>
           </Box>
-          <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200">
+          <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200" borderTopWidth="1px" borderTopColor="pink.300">
             <Thead>
               <Tr>
                 <Th>Ingrediente</Th>

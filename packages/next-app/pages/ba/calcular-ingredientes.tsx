@@ -1,8 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
-import {PageWrapper} from '../components/PageWrapper';
-import {backendApiServices} from '../services/backendApi';
-import IngredientsCalculator from '../components/IngredientsCalculator/IngredientsCalculator';
+import {PageWrapper} from '../../components/PageWrapper';
+import {backendApiServices} from '../../services/backendApi';
+import IngredientsCalculator from '../../components/IngredientsCalculator/IngredientsCalculator';
 
 interface IRecipeEditorPageProps {}
 

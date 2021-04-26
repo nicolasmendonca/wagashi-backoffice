@@ -1,22 +1,18 @@
 import React from 'react';
-import Head from 'next/head';
-import {RecipeEditor} from '@wagashi-backoffice/recipe-editor';
-import {backendApiServices} from '../services/backendApi';
-import {PageWrapper} from '../components/PageWrapper';
+import {GetServerSideProps} from 'next';
 
-interface IRecipeEditorPageProps {}
+interface IIndexProps {}
 
-const RecipeEditorPage: React.FC<IRecipeEditorPageProps> = () => {
-  return (
-    <>
-      <Head>
-        <title>Recetas</title>
-      </Head>
-      <PageWrapper title="Recetas">
-        <RecipeEditor services={backendApiServices} />
-      </PageWrapper>
-    </>
-  );
+const Index: React.FC<IIndexProps> = () => {
+  return null;
 };
 
-export default RecipeEditorPage;
+export const getServerSideProps: GetServerSideProps = () => {
+  return {
+    redirect: {
+      destination: '/ls/recetas',
+    },
+  };
+};
+
+export default Index;
