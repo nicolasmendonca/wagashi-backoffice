@@ -1,6 +1,6 @@
-import {LoadIngredientsService} from '../ingredient';
-import {Recipe, RecipeIngredient, RecipeIngredientSummary, RecipeWithId} from './entities';
-import {validateCreateRecipe} from './validators';
+import { LoadIngredientsService } from '../ingredient';
+import { Recipe, RecipeIngredient, RecipeIngredientSummary, RecipeWithId } from './entities';
+import { validateCreateRecipe } from './validators';
 
 export type CreateRecipeService = (recipe: Recipe) => Promise<RecipeWithId>;
 export type LoadRecipesService = () => Promise<RecipeWithId[]>;
@@ -46,6 +46,8 @@ export const calculateIngredientQuantities = (recipes: RecipeWithId[]): RecipeIn
       dedupedList.push(ingredientId);
       return dedupedList;
     }, []);
+
+  const asd = 'a';
 
   const recipeIngredientsSummary: RecipeIngredientSummary[] = dedupedIngredients.reduce((summary: RecipeIngredientSummary[], ingredientId: IngredientId) => {
     const recipeIngredients = ingredients.filter((ingredient) => ingredient.id === ingredientId);

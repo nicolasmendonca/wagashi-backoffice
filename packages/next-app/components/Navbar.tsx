@@ -1,13 +1,13 @@
-import {Box, Flex, HStack, useColorModeValue as mode, Text, Link as ChakraLink, VisuallyHidden, HTMLChakraProps, Icon} from '@chakra-ui/react';
-import {useRouter} from 'next/router';
-import NextLink, {LinkProps} from 'next/link';
+import { Box, Flex, HStack, useColorModeValue as mode, Link as ChakraLink, VisuallyHidden } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import NextLink, { LinkProps } from 'next/link';
 import * as React from 'react';
 
 interface DesktopNavLinkProps extends LinkProps {
   active?: boolean;
 }
 
-const DesktopNavLink: React.FC<DesktopNavLinkProps> = ({children, active, ...props}) => {
+const DesktopNavLink: React.FC<DesktopNavLinkProps> = ({ children, active, ...props }) => {
   return (
     <NextLink {...props}>
       <ChakraLink
@@ -25,10 +25,10 @@ const DesktopNavLink: React.FC<DesktopNavLinkProps> = ({children, active, ...pro
 };
 
 export const Navbar = () => {
-  const {pathname} = useRouter();
+  const { pathname } = useRouter();
   return (
     <Box as="header" boxShadow="md">
-      <Box maxW="7xl" mx="auto" py="4" px={{base: '6', md: '8'}}>
+      <Box maxW="7xl" mx="auto" py="4" px={{ base: '6', md: '8' }}>
         <Flex as="nav" justify="space-between">
           <HStack spacing="8">
             <Box as="a" href="#" rel="home">

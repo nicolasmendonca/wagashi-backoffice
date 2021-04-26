@@ -1,0 +1,13 @@
+{
+  "linterOptions": {
+    "exclude": ["**/node_modules/**/*"]
+  },
+  "rules": {
+    "no-console": {
+      "severity": "warning"
+    },
+    "no-unused-variable": {
+      "severity": "warning"
+    }
+  }
+}
