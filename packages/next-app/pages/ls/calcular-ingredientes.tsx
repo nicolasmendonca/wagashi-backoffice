@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import {PageWrapper} from '../../components/PageWrapper';
 import {localStorageApiService} from '../../services/localStorage';
-import IngredientsCalculator from '../../components/IngredientsCalculator/IngredientsCalculator';
+import {IngredientsCalculator} from '@wagashi-backoffice/ingredients-calculator';
 
 interface IRecipeEditorPageProps {}
 

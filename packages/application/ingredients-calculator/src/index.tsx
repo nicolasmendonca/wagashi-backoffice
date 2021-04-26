@@ -49,14 +49,14 @@ const useIngredientsCalculator = ({loadRecipesService, loadIngredientsService}: 
     // Repeated array of recipes to calculate
     const addedRecipes = Object.entries(recipesCount)
       .map(([recipeId, recipeRepetitions]) => {
-        const recipe = recipes.find((recipe) => recipe.id === recipeId);
+        const recipe = recipes.find((recipe) => recipe.id === recipeId)!;
         return Array(Number(recipeRepetitions))
           .fill(null)
           .map(() => recipe);
       })
       .flat();
     return calculateIngredientQuantities(addedRecipes).map((ingredientSummary) => {
-      const ingredientName = ingredients.find((ingredient) => ingredient.id === ingredientSummary.id).name;
+      const ingredientName = ingredients.find((ingredient) => ingredient.id === ingredientSummary.id)!.name;
       return {
         ...ingredientSummary,
         name: ingredientName,
@@ -81,10 +81,8 @@ const useIngredientsCalculator = ({loadRecipesService, loadIngredientsService}: 
   };
 };
 
-const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecipesService, loadIngredientsService}) => {
+export const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecipesService, loadIngredientsService}) => {
   const {recipes, ingredients, ingredientSummary, recipesCount, changeRecipeQuantity} = useIngredientsCalculator({loadIngredientsService, loadRecipesService});
-
-  console.log(ingredientSummary);
 
   const handleRecipeCountAdd = (recipeId: string, incrementBy: number) => {
     changeRecipeQuantity(recipeId, Math.max(Number(recipesCount[recipeId] || '0') + incrementBy, 0).toString());
@@ -106,7 +104,7 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
           </Tr>
         </Thead>
         <Tbody>
-          {recipes.map((recipe, index) => {
+          {recipes!.map((recipe) => {
             const recipeCount = recipesCount[recipe.id];
             return (
               <Tr key={recipe.id} p="4">
@@ -162,5 +160,3 @@ const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({loadRecip
     </SimpleGrid>
   );
 };
-
-export default IngredientsCalculator;

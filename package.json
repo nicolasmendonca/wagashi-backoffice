@@ -9,17 +9,20 @@
   "workspaces": [
     "packages/core",
     "packages/next-app",
-    "packages/recipe-editor"
+    "packages/application/recipe-editor",
+    "packages/application/ingredients-calculator"
   ],
   "devDependencies": {
     "async": "^3.2.0"
   },
   "scripts": {
-      "build": "yarn core:build && yarn recipe-editor:build && yarn next-app:build",
-      "core:build": "yarn --cwd packages/core build",
-      "recipe-editor:build": "yarn --cwd packages/recipe-editor build",
-      "recipe-editor:start": "yarn --cwd packages/recipe-editor start",
-      "next-app:build": "yarn --cwd packages/next-app build",
-      "next-app:start": "yarn --cwd packages/next-app dev"
+    "build": "yarn core:build && yarn recipe-editor:build && yarn ingredients-calculator:build && yarn next-app:build",
+    "core:build": "yarn --cwd packages/core build",
+    "recipe-editor:build": "yarn --cwd packages/application/recipe-editor build",
+    "recipe-editor:start": "yarn --cwd packages/application/recipe-editor start",
+    "ingredients-calculator:build": "yarn --cwd packages/application/ingredients-calculator build",
+    "ingredients-calculator:start": "yarn --cwd packages/application/ingredients-calculator start",
+    "next-app:build": "yarn --cwd packages/next-app build",
+    "next-app:start": "yarn --cwd packages/next-app dev"
   }
 }

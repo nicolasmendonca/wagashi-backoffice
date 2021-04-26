@@ -12,6 +12,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@wagashi-backoffice/recipe-editor": "1.0.0",
+    "@wagashi-backoffice/ingredients-calculator": "1.0.0",
     "axios": "^0.21.1",
     "framer-motion": "^4",
     "immer": "^9.0.1",
