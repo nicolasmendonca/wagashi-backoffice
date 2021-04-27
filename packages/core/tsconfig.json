@@ -6,6 +6,7 @@
     "lib": ["dom", "es2019"],
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src"
-  }
+    "rootDir": "src",
+    "skipLibCheck": true
+  },
 }

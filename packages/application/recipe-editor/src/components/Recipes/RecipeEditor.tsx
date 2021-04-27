@@ -20,6 +20,10 @@ export function RecipeEditor() {
   };
 
   const handleDeleteRecipeClicked = async (recipeId: string) => {
+    const deletedRecipeIndex = recipes!.findIndex((recipe) => recipe.id === recipeId);
+    if (deletedRecipeIndex === -1 || !confirm(`Deseas eliminar la receta de ${recipes![deletedRecipeIndex].name}?`)) {
+      return;
+    }
     mutateRecipes(
       async (recipes) =>
         produce(recipes, async (recipesDraft) => {

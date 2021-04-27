@@ -100,8 +100,8 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
         const savedIngredient = await createIngredient(createIngredientService, loadIngredientsService, {
           name,
         });
-        const newSavedIngredientIndex = ingredientsDraft.findIndex(ing => ing.id === createdIngredientWithFakeId.id);
-        if (!newSavedIngredientIndex) return
+        const newSavedIngredientIndex = ingredientsDraft.findIndex((ing) => ing.id === createdIngredientWithFakeId.id);
+        if (!newSavedIngredientIndex) return;
         ingredientsDraft[newSavedIngredientIndex].id = savedIngredient.id;
         // update form value with the new saved ingredient id
         setRecipeState((recipe) =>
@@ -117,21 +117,29 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
     e.preventDefault();
     const recipe: Recipe = convertFormValuesToRecipe(recipeState);
     if (editRecipeId) {
-      onRecipeUpdate({id: editRecipeId, ...recipe});
       mutateRecipes(async (cachedRecipes) =>
         produce(cachedRecipes, async (draft) => {
-          const recipeIndex = draft?.findIndex((recipe) => recipe.id === editRecipeId);
-          if (recipeIndex === -1 || recipeIndex === undefined || draft === undefined) return;
-          draft[recipeIndex] = await updateRecipe(updateRecipeService, editRecipeId, recipe);
+          try {
+            const recipeIndex = draft?.findIndex((recipe) => recipe.id === editRecipeId);
+            if (recipeIndex === -1 || recipeIndex === undefined || draft === undefined) return;
+            draft[recipeIndex] = await updateRecipe(updateRecipeService, loadRecipesService, editRecipeId, recipe);
+            onRecipeUpdate({id: editRecipeId, ...recipe});
+          } catch (e) {
+            alert(e.message);
+          }
         })
       );
     } else {
-      onRecipeCreate(recipe);
       mutateRecipes(async (cachedRecipes) =>
         produce(cachedRecipes, async (draft) => {
           if (draft === undefined) return;
-          const savedRecipe = await createRecipe(createRecipeService, loadIngredientsService, recipe);
-          draft.push(savedRecipe);
+          try {
+            const savedRecipe = await createRecipe(createRecipeService, loadIngredientsService, recipe);
+            onRecipeCreate(recipe);
+            draft.push(savedRecipe);
+          } catch (e) {
+            alert(e.message);
+          }
         })
       );
     }
