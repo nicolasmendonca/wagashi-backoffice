@@ -38,6 +38,9 @@ export const Navbar = () => {
               <DesktopNavLink active={pathname === '/ls/recetas'} href="/ls/recetas">
                 Recetas
               </DesktopNavLink>
+              <DesktopNavLink href="/ls/ingredientes" active={pathname === '/ls/ingredientes'}>
+                Ingredientes
+              </DesktopNavLink>
               <DesktopNavLink href="/ls/calcular-ingredientes" active={pathname === '/ls/calcular-ingredientes'}>
                 Calculadora de Ingredientes
               </DesktopNavLink>

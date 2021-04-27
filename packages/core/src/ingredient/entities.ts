@@ -1,7 +1,8 @@
-import {WithId} from '../utils/types';
-
 export interface Ingredient {
   name: string;
+  quantity?: number;
+  measure?: string;
+  price?: number;
 }
 
 export interface IngredientWithId extends Ingredient {

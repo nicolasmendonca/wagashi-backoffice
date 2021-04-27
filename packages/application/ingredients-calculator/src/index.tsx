@@ -8,25 +8,7 @@ import {
   LoadRecipesService,
   RecipeIngredientSummary,
 } from '@wagashi-backoffice/core';
-import {
-  SimpleGrid,
-  List,
-  ListItem,
-  Button,
-  Flex,
-  Editable,
-  EditableInput,
-  EditablePreview,
-  Spinner,
-  Box,
-  Heading,
-  Table,
-  Thead,
-  Th,
-  Tr,
-  Tbody,
-  Td,
-} from '@chakra-ui/react';
+import {SimpleGrid, Button, Flex, Editable, EditableInput, EditablePreview, Spinner, Box, Heading, Table, Thead, Th, Tr, Tbody, Td} from '@chakra-ui/react';
 import {RiSubtractFill, RiAddFill} from 'react-icons/ri';
 import useSWR from 'swr';
 
