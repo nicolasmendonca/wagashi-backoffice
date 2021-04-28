@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import {PageWrapper} from '../../components/PageWrapper';
-import {Ingredients} from '../../components/Ingredients';
+import {Ingredients} from '@wagashi-backoffice/ingredients-editor';
 import {backendApiServices} from '../../services/backendApi';
 import {backendApiNavbarLinks} from '../../links/backendApiLinks';
 

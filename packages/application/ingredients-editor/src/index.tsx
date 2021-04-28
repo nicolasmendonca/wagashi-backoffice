@@ -27,14 +27,14 @@ export const Ingredients: React.FC<IngredientsProps> = ({loadIngredientsService,
 
   const handleIngredientChange = async (e: ChangeEvent<HTMLInputElement>, ingredientIndex: number) => {
     const {name, value} = e.target;
+    if (!ingredients) return;
     mutate(
-      (ingredientList) =>
-        produce(ingredientList, (ingredientsDraft) => {
-          ingredientsDraft[ingredientIndex][name] = `${value}`;
-          updatedIngredients.current[ingredientList[ingredientIndex].id] = ingredientList[ingredientIndex];
-          setHasUnsavedChanges(true);
-          return ingredientsDraft;
-        }),
+      produce(ingredients, (ingredientsDraft) => {
+        ingredientsDraft[ingredientIndex][name] = `${value}`;
+        updatedIngredients.current[ingredients[ingredientIndex].id] = ingredients[ingredientIndex];
+        setHasUnsavedChanges(true);
+        return ingredientsDraft;
+      }),
       false
     );
   };
@@ -58,6 +58,7 @@ export const Ingredients: React.FC<IngredientsProps> = ({loadIngredientsService,
   };
 
   const handleDeleteIngredient = (ingredientIndex: number) => {
+    if (!ingredients) return;
     const ingredient = ingredients[ingredientIndex];
     if (!ingredient) return;
     deletedIngredientIds.current.push(ingredient.id);

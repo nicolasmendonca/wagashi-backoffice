@@ -11,6 +11,7 @@
     "@chakra-ui/react": "^1.5.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@wagashi-backoffice/ingredients-editor": "1.0.0",
     "@wagashi-backoffice/recipe-editor": "1.0.0",
     "@wagashi-backoffice/ingredients-calculator": "1.0.0",
     "axios": "^0.21.1",

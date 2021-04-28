@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import {PageWrapper} from '../../components/PageWrapper';
 import {localStorageApiService} from '../../services/localStorage';
-import {Ingredients} from '../../components/Ingredients';
+import {Ingredients} from '@wagashi-backoffice/ingredients-editor';
 import {localStorageNavbarLinks} from '../../links/localStorageLinks';
 
 interface IIngredientsProps {}
