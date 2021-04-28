@@ -1,5 +1,5 @@
 import {buildCreateRecipeService, buildDeleteRecipeService, buildLoadRecipesService, buildUpdateRecipeService} from './recipeService';
-import {buildCreateIngredientService, buildLoadIngredientsService} from './ingredientService';
+import {buildCreateIngredientService, buildDeleteIngredientsService, buildLoadIngredientsService, buildUpdateIngredientsService} from './ingredientService';
 import {ingredientsBackendApiRepository, recipesBackendApiRepository} from '../../repositories/backendApi';
 
 export const backendApiServices = {
@@ -9,4 +9,6 @@ export const backendApiServices = {
   loadIngredientsService: buildLoadIngredientsService(ingredientsBackendApiRepository),
   updateRecipeService: buildUpdateRecipeService(recipesBackendApiRepository),
   deleteRecipeService: buildDeleteRecipeService(recipesBackendApiRepository),
+  deleteIngredientsService: buildDeleteIngredientsService(ingredientsBackendApiRepository),
+  updateIngredientService: buildUpdateIngredientsService(ingredientsBackendApiRepository),
 };

@@ -8,10 +8,10 @@ import useSWR from 'swr';
 import {convertFormValuesToRecipe, createIngredientFormValues, convertRecipeToForm} from './formHandlers';
 import {useRecipeEditorServices} from '../../context/RecipeEditorServiceProvider';
 import type {IEditRecipeBoxProps, RecipeForm} from './types';
-import {nanoid} from 'nanoid';
 
 export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, onRecipeUpdate, editRecipeId}) => {
   const {loadRecipesService, createIngredientService, updateRecipeService, createRecipeService, loadIngredientsService} = useRecipeEditorServices();
+  const [isCreatingIngredient, setIsCreatingIngredient] = React.useState(false);
   const {data: ingredientList = [], mutate: mutateIngredients} = useSWR('ingredients', () => loadIngredients(loadIngredientsService));
   const {data: recipeList = [], mutate: mutateRecipes} = useSWR('recipes', () => loadRecipes(loadRecipesService));
   const [recipeState, setRecipeState] = React.useState<RecipeForm>(() => ({
@@ -23,7 +23,7 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
     if (editRecipeId && ingredientList.length > 0 && recipeList.length > 0) {
       const loadedRecipe = recipeList.find((recipe) => recipe.id === editRecipeId);
       if (!loadedRecipe) {
-        throw new Error('Recipe not found');
+        return;
       }
       setRecipeState(convertRecipeToForm(loadedRecipe));
     }
@@ -46,9 +46,9 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
     const updatedRecipe = produce(recipeState, (draft) => {
       draft.ingredients[recipeIngredientIndex].ingredientId = newIngredientId;
 
-      const isLastIngredientFormInputFilled = draft.ingredients[draft.ingredients.length - 1].ingredientId !== '';
+      const remainingIngredientFormInputs = draft.ingredients.filter((ing) => ing.ingredientId === '').length;
       // Add empty ingredient if that was the last one
-      if (isLastIngredientFormInputFilled) {
+      if (remainingIngredientFormInputs === 0) {
         draft.ingredients.push(createIngredientFormValues());
       }
     });
@@ -59,7 +59,7 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
     const updatedRecipe = produce(recipeState, (draft) => {
       draft.ingredients.splice(ingredientIndex, 1);
 
-      const remainingIngredientFormInputs = draft.ingredients.length;
+      const remainingIngredientFormInputs = draft.ingredients.filter((ing) => ing.ingredientId === '').length;
       // Add empty ingredient if that was the last one
       if (remainingIngredientFormInputs === 0) {
         draft.ingredients.push(createIngredientFormValues());
@@ -69,30 +69,7 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
   };
 
   const handleIngredientCreate = async (ingredientIndex: number, name: string) => {
-    const createdIngredientWithFakeId = {id: nanoid(), name};
-    // 1. Update the form value and the ingredients to reflect the change instantly
-    mutateIngredients(
-      (ingredients) =>
-        produce(ingredients, (ingredientsDraft) => {
-          if (!ingredientsDraft) return;
-          ingredientsDraft.push(createdIngredientWithFakeId);
-          // update recipe form to contain new value
-          setRecipeState((recipe) =>
-            produce(recipe, (recipeDraft) => {
-              recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
-                ingredientId: createdIngredientWithFakeId.id,
-              });
-              const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
-              // Add empty ingredient if that was the last one
-              if (!isAnyAvailableIngredientFormInput) {
-                recipeDraft.ingredients.push(createIngredientFormValues());
-              }
-            })
-          );
-        }),
-      false
-    );
-    // 2. create the ingredient and update form state with real value and then revalidate
+    setIsCreatingIngredient(true);
     mutateIngredients(async (ingredients) =>
       produce(ingredients, async (ingredientsDraft) => {
         if (!ingredientsDraft) return;
@@ -100,13 +77,18 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
         const savedIngredient = await createIngredient(createIngredientService, loadIngredientsService, {
           name,
         });
-        const newSavedIngredientIndex = ingredientsDraft.findIndex((ing) => ing.id === createdIngredientWithFakeId.id);
-        if (!newSavedIngredientIndex) return;
-        ingredientsDraft[newSavedIngredientIndex].id = savedIngredient.id;
-        // update form value with the new saved ingredient id
         setRecipeState((recipe) =>
           produce(recipe, (recipeDraft) => {
-            recipeDraft.ingredients[ingredientIndex].ingredientId = savedIngredient.id;
+            recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
+              ingredientId: savedIngredient.id,
+              quantity: savedIngredient.quantity?.toString() || '',
+            });
+            const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
+            // Add empty ingredient if that was the last one
+            if (!isAnyAvailableIngredientFormInput) {
+              recipeDraft.ingredients.push(createIngredientFormValues());
+            }
+            setIsCreatingIngredient(false);
           })
         );
       })
@@ -117,31 +99,11 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
     e.preventDefault();
     const recipe: Recipe = convertFormValuesToRecipe(recipeState);
     if (editRecipeId) {
-      mutateRecipes(async (cachedRecipes) =>
-        produce(cachedRecipes, async (draft) => {
-          try {
-            const recipeIndex = draft?.findIndex((recipe) => recipe.id === editRecipeId);
-            if (recipeIndex === -1 || recipeIndex === undefined || draft === undefined) return;
-            draft[recipeIndex] = await updateRecipe(updateRecipeService, loadRecipesService, editRecipeId, recipe);
-            onRecipeUpdate({id: editRecipeId, ...recipe});
-          } catch (e) {
-            alert(e.message);
-          }
-        })
-      );
+      const updatedRecipe = await updateRecipe(updateRecipeService, loadIngredientsService, editRecipeId, recipe);
+      onRecipeUpdate(updatedRecipe);
     } else {
-      mutateRecipes(async (cachedRecipes) =>
-        produce(cachedRecipes, async (draft) => {
-          if (draft === undefined) return;
-          try {
-            const savedRecipe = await createRecipe(createRecipeService, loadIngredientsService, recipe);
-            onRecipeCreate(recipe);
-            draft.push(savedRecipe);
-          } catch (e) {
-            alert(e.message);
-          }
-        })
-      );
+      const createdRecipe = await createRecipe(createRecipeService, loadIngredientsService, recipe);
+      onRecipeCreate(createdRecipe);
     }
   };
 
@@ -169,6 +131,8 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
               <StyledCreatableSelect
                 placeholder="Elegí un ingrediente"
                 isClearable
+                isDisabled={isCreatingIngredient}
+                isLoading={isCreatingIngredient}
                 width="100%"
                 sx={{
                   '& > div': {
@@ -224,5 +188,6 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
 };
 
 const StyledCreatableSelect = chakra(CreatableSelect, {
-  shouldForwardProp: (prop: string) => ['isClearable', 'placeholder', 'value', 'options', 'formatCreateLabel', 'onCreateOption', 'onChange'].includes(prop),
+  shouldForwardProp: (prop: string) =>
+    ['isDisabled', 'isLoading', 'isClearable', 'placeholder', 'value', 'options', 'formatCreateLabel', 'onCreateOption', 'onChange'].includes(prop),
 });

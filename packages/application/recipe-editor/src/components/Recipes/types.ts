@@ -1,7 +1,7 @@
-import { Recipe, RecipeWithId } from '@wagashi-backoffice/core';
+import {Recipe, RecipeWithId} from '@wagashi-backoffice/core';
 
 export interface IEditRecipeBoxProps {
-  onRecipeCreate: (recipe: Recipe) => void;
+  onRecipeCreate: (recipe: RecipeWithId) => void;
   onRecipeUpdate: (recipe: RecipeWithId) => void;
   editRecipeId?: string;
 }

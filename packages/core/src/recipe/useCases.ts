@@ -4,7 +4,7 @@ import {validateCreateRecipe, validateUpdateRecipe} from './validators';
 
 export type CreateRecipeService = (recipe: Recipe) => Promise<RecipeWithId>;
 export type LoadRecipesService = () => Promise<RecipeWithId[]>;
-export type DeleteRecipeService = (recipeId: string) => Promise<RecipeWithId[]>;
+export type DeleteRecipeService = (recipeIds: string) => Promise<RecipeWithId[]>;
 export type UpdateRecipeService = (recipeId: string, recipe: Recipe) => Promise<RecipeWithId>;
 
 export const createRecipe = async (

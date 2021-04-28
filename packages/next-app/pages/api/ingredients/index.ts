@@ -21,4 +21,14 @@ handler.post('/api/ingredients', async (req: Request, res: NextApiResponse) => {
   return res.status(200).json(newIngredient);
 });
 
+handler.delete('/api/ingredients', async (req: Request, res: NextApiResponse) => {
+  await req.db.collection('ingredients').deleteMany({
+    id: {
+      $in: req.body,
+    },
+  });
+  const updatedIngredients = await req.db.collection('ingredients').find({});
+  return res.status(200).json(updatedIngredients);
+});
+
 export default handler;

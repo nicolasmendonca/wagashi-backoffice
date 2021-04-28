@@ -77,7 +77,7 @@ export const IngredientsCalculator: React.FC<IIngredientsCalculatorProps> = ({lo
   ) : (
     <SimpleGrid columns={2} gap={8}>
       <Table p={4} variant="striped" colorScheme="pink" bgColor="pink.200" borderColor="pink.200" borderWidth="1px" borderRadius="md">
-        <Thead>
+        <Thead bg="pink.300">
           <Tr>
             <Th>Receta</Th>
             <Th textAlign="right" width="180px">

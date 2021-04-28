@@ -24,26 +24,31 @@ const DesktopNavLink: React.FC<DesktopNavLinkProps> = ({children, active, ...pro
   );
 };
 
-export const Navbar = () => {
+export interface Link {
+  name: string;
+  pathname: string;
+}
+
+interface INavbarProps {
+  links: Link[];
+}
+
+export const Navbar: React.FC<INavbarProps> = ({links}) => {
   const {pathname} = useRouter();
   return (
-    <Box as="header" boxShadow="md" bg="gray.500">
+    <Box as="header" boxShadow="md" bg="pink.400">
       <Box maxW="7xl" mx="auto" py="4" px={{base: '6', md: '8'}}>
         <Flex as="nav" justify="space-between">
-          <HStack spacing="8">
+          <HStack>
             <Box as="a" href="#" rel="home">
               <VisuallyHidden>Wagashi</VisuallyHidden>
             </Box>
             <HStack spacing="8">
-              <DesktopNavLink active={pathname === '/ls/recetas'} href="/ls/recetas">
-                Recetas
-              </DesktopNavLink>
-              <DesktopNavLink href="/ls/ingredientes" active={pathname === '/ls/ingredientes'}>
-                Ingredientes
-              </DesktopNavLink>
-              <DesktopNavLink href="/ls/calcular-ingredientes" active={pathname === '/ls/calcular-ingredientes'}>
-                Calculadora de Ingredientes
-              </DesktopNavLink>
+              {links.map((link) => (
+                <DesktopNavLink key={link.pathname} active={pathname === link.pathname} href={link.pathname}>
+                  {link.name}
+                </DesktopNavLink>
+              ))}
             </HStack>
           </HStack>
         </Flex>

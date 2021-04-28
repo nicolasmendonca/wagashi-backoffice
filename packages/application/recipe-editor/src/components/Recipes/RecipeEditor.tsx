@@ -1,5 +1,5 @@
 import React from 'react';
-import {deleteRecipe, loadIngredients, loadRecipes} from '@wagashi-backoffice/core';
+import {deleteRecipe, IngredientWithId, loadIngredients, loadRecipes, Recipe, RecipeWithId} from '@wagashi-backoffice/core';
 import useSWR from 'swr';
 import produce from 'immer';
 import {RiPencilFill, RiDeleteBin5Fill} from 'react-icons/ri';
@@ -10,13 +10,40 @@ import {useRecipeEditorServices, RecipeEditorServiceProvider} from 'context/Reci
 export function RecipeEditor() {
   const {loadRecipesService, loadIngredientsService, deleteRecipeService} = useRecipeEditorServices();
   const [activeRecipeId, setActiveRecipeId] = React.useState<string | undefined>(undefined);
-  const {data: recipes, mutate: mutateRecipes} = useSWR('recipes', () => loadRecipes(loadRecipesService));
-  const {data: ingredientList} = useSWR('ingredients', () => loadIngredients(loadIngredientsService));
+  const {data: recipes, mutate: mutateRecipes} = useSWR<RecipeWithId[]>('recipes', () => loadRecipes(loadRecipesService));
+  const {data: ingredientList} = useSWR<IngredientWithId[]>('ingredients', () => loadIngredients(loadIngredientsService));
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
 
-  const handleRecipeSave = async () => {
+  const resetEditRecipeModal = () => {
     setIsModalOpen(false);
     setActiveRecipeId(undefined);
+  };
+
+  const handleRecipeCreate = (recipe: RecipeWithId) => {
+    mutateRecipes(
+      produce(recipes, (recipeDraft) => {
+        recipeDraft?.push(recipe);
+      }),
+      false
+    );
+    resetEditRecipeModal();
+  };
+
+  const handleRecipeUpdate = (updatedRecipe: RecipeWithId) => {
+    mutateRecipes(
+      produce(recipes, (recipeDraft) => {
+        if (recipeDraft) {
+          const updatedRecipeIndex = recipeDraft.findIndex((recipe) => recipe.id === updatedRecipe.id);
+          if (recipeDraft[updatedRecipeIndex]) {
+            recipeDraft[updatedRecipeIndex] = updatedRecipe;
+          } else {
+            console.error('Not found', recipes, updatedRecipe);
+          }
+        }
+      }),
+      false
+    );
+    resetEditRecipeModal();
   };
 
   const handleDeleteRecipeClicked = async (recipeId: string) => {
@@ -57,8 +84,8 @@ export function RecipeEditor() {
       <Grid templateColumns={['1fr', '1fr', 'repeat(3, 1fr)']} my={8} gap={4}>
         {recipes!.map((recipe) => {
           return (
-            <GridItem backgroundColor="pink.200" key={recipe.id}>
-              <Flex p={4} backgroundColor="pink.400" borderTopRadius="md" flexDirection="row" justifyContent="space-between" alignItems="center">
+            <GridItem backgroundColor="pink.100" key={recipe.id} boxShadow="md">
+              <Flex p={4} backgroundColor="pink.300" borderTopRadius="md" flexDirection="row" justifyContent="space-between" alignItems="center">
                 <Text fontWeight="bold" color="white" verticalAlign="middle" wordBreak="break-word">
                   {recipe.name}
                 </Text>
@@ -94,7 +121,7 @@ export function RecipeEditor() {
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
-          <EditRecipeBox editRecipeId={activeRecipeId} onRecipeCreate={handleRecipeSave} onRecipeUpdate={handleRecipeSave} />
+          <EditRecipeBox editRecipeId={activeRecipeId} onRecipeCreate={handleRecipeCreate} onRecipeUpdate={handleRecipeUpdate} />
         </ModalContent>
       </Modal>
     </React.Fragment>

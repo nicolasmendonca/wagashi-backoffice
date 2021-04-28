@@ -7,8 +7,9 @@ const Index: React.FC<IIndexProps> = () => {
   return null;
 };
 
-export const getServerSideProps: GetServerSideProps = () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   return {
+    props: {},
     redirect: {
       destination: '/ls/recetas',
     },
