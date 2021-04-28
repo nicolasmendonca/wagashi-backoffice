@@ -9,7 +9,7 @@ interface PageWrapperProps {
 
 export const PageWrapper: React.FC<PageWrapperProps> = ({title, children, navbarLinks}) => {
   return (
-    <Box bgColor="teal.400" minHeight="100vh">
+    <Box bgColor="gray.100" minHeight="100vh">
       <Navbar links={navbarLinks} />
       <Container maxW="container.xl" py={12}>
         <Heading>{title}</Heading>
