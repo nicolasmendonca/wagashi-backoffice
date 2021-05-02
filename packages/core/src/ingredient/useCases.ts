@@ -8,10 +8,9 @@ export type DeleteIngredientsService = (ingredientIds: string[]) => Promise<Ingr
 
 export const createIngredient = async (
   createIngredientService: CreateIngredientService,
-  loadIngredientsService: LoadIngredientsService,
+  ingredientList: IngredientWithId[],
   ingredient: Ingredient
 ): Promise<IngredientWithId> => {
-  const ingredientList = await loadIngredientsService();
   const validatedIngredient = await validateCreateIngredient(ingredientList, ingredient);
   return createIngredientService(validatedIngredient);
 };

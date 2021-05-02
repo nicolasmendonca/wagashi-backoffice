@@ -20,7 +20,9 @@ interface IngredientsProps {
 }
 
 export const Ingredients: React.FC<IngredientsProps> = ({loadIngredientsService, updateIngredientService, deleteIngredientsService}) => {
-  const {data: ingredients, mutate, revalidate} = useSWR('ingredients', () => loadIngredients(loadIngredientsService));
+  const {data: ingredients, mutate, revalidate} = useSWR('ingredients', () => loadIngredients(loadIngredientsService), {
+    revalidateOnFocus: false,
+  });
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
   const updatedIngredients = React.useRef<Record<string, IngredientWithId>>({});
   const deletedIngredientIds = React.useRef<string[]>([]);

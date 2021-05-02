@@ -9,7 +9,7 @@ handler.put('/api/recipes/:recipeId', async (req: Request, res: NextApiResponse)
 
 handler.delete('/api/recipes/:recipeId', async (req: Request, res: NextApiResponse) => {
   const {recipeId} = req.query;
-  await req.db.collection('recipes').deleteOne({id: recipeId});
+  await req.db.collection('recipes').deleteOne({id: {$eq: recipeId}});
   const recipes = await req.db.collection('recipes').find({});
   return res.status(200).json(recipes);
 });

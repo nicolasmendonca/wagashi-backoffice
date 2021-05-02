@@ -1,15 +1,15 @@
-import { Db, MongoClient } from 'mongodb';
-import { NextApiRequest } from 'next';
+import {Db, MongoClient} from 'mongodb';
+import {NextApiRequest} from 'next';
 import nextConnect from 'next-connect';
 
 const client = new MongoClient(process.env.MONGODB_URI, {
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 async function database(req, res, next) {
   if (!client.isConnected()) await client.connect();
   req.dbClient = client;
-  req.db = client.db('MCT');
+  req.db = client.db(process.env.NODE_ENV === 'development' ? 'MCT' : 'production');
   return next();
 }
 

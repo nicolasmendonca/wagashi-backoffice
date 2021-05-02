@@ -70,29 +70,29 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
 
   const handleIngredientCreate = async (ingredientIndex: number, name: string) => {
     setIsCreatingIngredient(true);
-    mutateIngredients(async (ingredients) =>
-      produce(ingredients, async (ingredientsDraft) => {
-        if (!ingredientsDraft) return;
-        // create the ingredient on the backend
-        const savedIngredient = await createIngredient(createIngredientService, loadIngredientsService, {
-          name,
-        });
-        setRecipeState((recipe) =>
-          produce(recipe, (recipeDraft) => {
-            recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
-              ingredientId: savedIngredient.id,
-              quantity: savedIngredient.quantity?.toString() || '',
-            });
-            const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
-            // Add empty ingredient if that was the last one
-            if (!isAnyAvailableIngredientFormInput) {
-              recipeDraft.ingredients.push(createIngredientFormValues());
-            }
-            setIsCreatingIngredient(false);
-          })
-        );
-      })
-    );
+    const updatedingredients = produce(ingredientList, async (ingredientsDraft) => {
+      if (!ingredientsDraft) return;
+      // create the ingredient on the backend
+      const createdIngredient = await createIngredient(createIngredientService, ingredientList, {
+        name,
+      });
+      setRecipeState((recipe) =>
+        produce(recipe, (recipeDraft) => {
+          const savedIngredient = recipeDraft.ingredients[ingredientIndex];
+          recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
+            ...savedIngredient,
+            ingredientId: createdIngredient?.id,
+          });
+          const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
+          // Add empty ingredient if that was the last one
+          if (!isAnyAvailableIngredientFormInput) {
+            recipeDraft.ingredients.push(createIngredientFormValues());
+          }
+          setIsCreatingIngredient(false);
+        })
+      );
+    });
+    mutateIngredients(updatedingredients);
   };
 
   const handleSubmit = async (e: FormEvent) => {

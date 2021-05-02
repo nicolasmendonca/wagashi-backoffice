@@ -22,13 +22,34 @@ handler.post('/api/ingredients', async (req: Request, res: NextApiResponse) => {
 });
 
 handler.delete('/api/ingredients', async (req: Request, res: NextApiResponse) => {
+  const deletedIngredientIds = req.body;
   await req.db.collection('ingredients').deleteMany({
     id: {
-      $in: req.body,
+      $in: deletedIngredientIds,
     },
   });
-  const updatedIngredients = await req.db.collection('ingredients').find({});
-  return res.status(200).json(updatedIngredients);
+  // Remove the ingredient from associated recipes
+  await req.db.collection('recipes').updateMany(
+    {
+      ingredients: {
+        $elemMatch: {
+          id: {
+            $in: deletedIngredientIds,
+          },
+        },
+      },
+    },
+    {
+      $pull: {
+        ingredients: {
+          id: {
+            $in: deletedIngredientIds,
+          },
+        },
+      },
+    }
+  );
+  return res.status(200).json(true);
 });
 
 export default handler;
