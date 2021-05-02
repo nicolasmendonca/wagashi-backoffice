@@ -8,6 +8,5 @@ handler.put('/api/ingredients/:id', async (req: Request, res: NextApiResponse) =
     },
     req.body
   );
-  const updatedIngredients = await req.db.collection('ingredients').find({});
-  return res.status(200).json(updatedIngredients);
+  return res.status(200);
 });

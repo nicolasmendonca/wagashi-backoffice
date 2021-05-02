@@ -41,6 +41,5 @@ export const buildDeleteIngredientsService = (ingredientsRepository: Ingredients
     const ingredientList = await ingredientsRepository.load();
     const remainingIngredients = ingredientList.filter((ingredient) => !deletedIngredientIds.includes(ingredient.id));
     await ingredientsRepository.save(remainingIngredients);
-    return remainingIngredients;
   };
 };

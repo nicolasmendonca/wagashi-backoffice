@@ -4,7 +4,7 @@ import {validateCreateIngredient} from './validators';
 export type CreateIngredientService = (ingredient: Ingredient) => Promise<IngredientWithId>;
 export type LoadIngredientsService = () => Promise<IngredientWithId[]>;
 export type UpdateIngredientService = (ingredientId: string, ingredient: Partial<IngredientWithId>) => Promise<IngredientWithId>;
-export type DeleteIngredientsService = (ingredientIds: string[]) => Promise<IngredientWithId[]>;
+export type DeleteIngredientsService = (ingredientIds: string[]) => Promise<void>;
 
 export const createIngredient = async (
   createIngredientService: CreateIngredientService,
@@ -26,5 +26,5 @@ export const updateIngredient = async (
 
 export const loadIngredients = async (loadIngredientsService: LoadIngredientsService): Promise<IngredientWithId[]> => loadIngredientsService();
 
-export const deleteIngredient = async (deleteIngredientService: DeleteIngredientsService, ingredientIds: string[]): Promise<IngredientWithId[]> =>
+export const deleteIngredient = async (deleteIngredientService: DeleteIngredientsService, ingredientIds: string[]): Promise<void> =>
   deleteIngredientService(ingredientIds);

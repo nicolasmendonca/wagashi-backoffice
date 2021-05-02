@@ -61,7 +61,6 @@ export function RecipeEditor() {
       false
     );
     await deleteRecipe(deleteRecipeService, recipeId);
-    mutateRecipes();
   };
 
   const handleEditRecipeClicked = async (recipeId: string) => {

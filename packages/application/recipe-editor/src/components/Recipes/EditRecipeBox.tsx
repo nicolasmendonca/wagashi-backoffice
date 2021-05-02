@@ -13,7 +13,7 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
   const {loadRecipesService, createIngredientService, updateRecipeService, createRecipeService, loadIngredientsService} = useRecipeEditorServices();
   const [isCreatingIngredient, setIsCreatingIngredient] = React.useState(false);
   const {data: ingredientList = [], mutate: mutateIngredients} = useSWR('ingredients', () => loadIngredients(loadIngredientsService));
-  const {data: recipeList = [], mutate: mutateRecipes} = useSWR('recipes', () => loadRecipes(loadRecipesService));
+  const {data: recipeList = []} = useSWR('recipes', () => loadRecipes(loadRecipesService));
   const [recipeState, setRecipeState] = React.useState<RecipeForm>(() => ({
     name: '',
     ingredients: [createIngredientFormValues()],
@@ -70,29 +70,33 @@ export const EditRecipeBox: React.FC<IEditRecipeBoxProps> = ({onRecipeCreate, on
 
   const handleIngredientCreate = async (ingredientIndex: number, name: string) => {
     setIsCreatingIngredient(true);
-    const updatedingredients = produce(ingredientList, async (ingredientsDraft) => {
-      if (!ingredientsDraft) return;
-      // create the ingredient on the backend
-      const createdIngredient = await createIngredient(createIngredientService, ingredientList, {
-        name,
-      });
-      setRecipeState((recipe) =>
-        produce(recipe, (recipeDraft) => {
-          const savedIngredient = recipeDraft.ingredients[ingredientIndex];
-          recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
-            ...savedIngredient,
-            ingredientId: createdIngredient?.id,
-          });
-          const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
-          // Add empty ingredient if that was the last one
-          if (!isAnyAvailableIngredientFormInput) {
-            recipeDraft.ingredients.push(createIngredientFormValues());
-          }
-          setIsCreatingIngredient(false);
-        })
-      );
+    // create the ingredient on the backend
+    const createdIngredient = await createIngredient(createIngredientService, ingredientList, {
+      name,
     });
-    mutateIngredients(updatedingredients);
+
+    mutateIngredients(
+      produce(ingredientList, (ingredientsDraft) => {
+        ingredientsDraft?.push(createdIngredient);
+      }),
+      false
+    );
+
+    setRecipeState((recipeState) =>
+      produce(recipeState, (recipeDraft) => {
+        recipeDraft.ingredients[ingredientIndex] = createIngredientFormValues({
+          ...recipeDraft.ingredients[ingredientIndex],
+          ingredientId: createdIngredient?.id,
+        });
+        const isAnyAvailableIngredientFormInput = recipeDraft.ingredients.some((ing) => ing.ingredientId === '');
+        // Add empty ingredient if that was the last one
+        if (!isAnyAvailableIngredientFormInput) {
+          recipeDraft.ingredients.push(createIngredientFormValues());
+        }
+      })
+    );
+
+    setIsCreatingIngredient(false);
   };
 
   const handleSubmit = async (e: FormEvent) => {

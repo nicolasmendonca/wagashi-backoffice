@@ -1,20 +1,11 @@
 import produce from 'immer';
 import {nanoid} from 'nanoid';
-import {
-  Recipe,
-  RecipeWithId,
-  CreateRecipeService,
-  DeleteRecipeService,
-  LoadRecipesService,
-  UpdateRecipeService,
-} from '@wagashi-backoffice/core';
+import {Recipe, RecipeWithId, CreateRecipeService, DeleteRecipeService, LoadRecipesService, UpdateRecipeService} from '@wagashi-backoffice/core';
 import {LocalStorageRepository} from './types';
 
 export type RecipesRepository = LocalStorageRepository<RecipeWithId[]>;
 
-export const buildCreateRecipeService = (
-  recipesRepository: RecipesRepository
-): CreateRecipeService => {
+export const buildCreateRecipeService = (recipesRepository: RecipesRepository): CreateRecipeService => {
   return async (recipe: Recipe): Promise<RecipeWithId> => {
     const recipesList = await recipesRepository.load();
     const recipeWithId = {id: nanoid(), ...recipe};
@@ -24,18 +15,14 @@ export const buildCreateRecipeService = (
   };
 };
 
-export const buildLoadRecipesService = (
-  recipesRepository: RecipesRepository
-): LoadRecipesService => {
+export const buildLoadRecipesService = (recipesRepository: RecipesRepository): LoadRecipesService => {
   return async () => {
     const recipes = await recipesRepository.load();
     return recipes;
   };
 };
 
-export const buildDeleteRecipeService = (
-  recipesRepository: RecipesRepository
-): DeleteRecipeService => {
+export const buildDeleteRecipeService = (recipesRepository: RecipesRepository): DeleteRecipeService => {
   return async (recipeId: string) => {
     const recipes = await recipesRepository.load();
     const updatedRecipes = produce(recipes, (draft) => {
@@ -43,13 +30,10 @@ export const buildDeleteRecipeService = (
       draft.splice(recipe, 1);
     });
     await recipesRepository.save(updatedRecipes);
-    return updatedRecipes;
   };
 };
 
-export const buildUpdateRecipeService = (
-  recipesRepository: RecipesRepository
-): UpdateRecipeService => {
+export const buildUpdateRecipeService = (recipesRepository: RecipesRepository): UpdateRecipeService => {
   return async (recipeId: string, recipe: Recipe) => {
     const recipes = await recipesRepository.load();
     const updatedRecipes = produce(recipes, (draft) => {

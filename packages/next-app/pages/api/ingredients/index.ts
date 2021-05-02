@@ -49,7 +49,7 @@ handler.delete('/api/ingredients', async (req: Request, res: NextApiResponse) =>
       },
     }
   );
-  return res.status(200).json(true);
+  return res.status(200);
 });
 
 export default handler;

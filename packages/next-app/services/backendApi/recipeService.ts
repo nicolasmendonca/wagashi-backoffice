@@ -18,7 +18,6 @@ export const buildLoadRecipesService = (recipesRepository: RecipesRepository): L
 export const buildDeleteRecipeService = (recipesRepository: RecipesRepository): DeleteRecipeService => {
   return async (recipeId: string) => {
     await recipesRepository.delete(recipeId);
-    return recipesRepository.load();
   };
 };
 

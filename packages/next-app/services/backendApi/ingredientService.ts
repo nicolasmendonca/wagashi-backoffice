@@ -22,7 +22,6 @@ export const buildCreateIngredientService = (ingredientsRepository: IngredientsR
 export const buildDeleteIngredientsService = (ingredientsRepository: IngredientsRepository): DeleteIngredientsService => {
   return async (ingredientIds: string[]) => {
     await ingredientsRepository.delete(ingredientIds);
-    return ingredientsRepository.load();
   };
 };
 
